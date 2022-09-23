@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quick Start - Leaflet</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="docs/images/favicon.ico"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""
+    ></script>
+  </head>
+  <body>
+    <div
+      id="map"
+      style="width: 1200px; height: 800px; display: inline-block"
+    ></div>
+
+    <script>
+      var map = L.map("map").setView([20.01, 110.01], 12);
+
+      L.tileLayer(
+        "http://t0.tianditu.gov.cn/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=81dd3e1715be9d296f1a9f2b0c0196aa",
+        {
+          maxZoom: 18,
+          attribution: "Map data &copy; demo",
+          id: "mapbox/streets-v11",
+          tileSize: 512,
+          zoomOffset: -1,
+        }
+      ).addTo(map);
+
+      L.tileLayer(
+        "http://t0.tianditu.gov.cn/DataServer?T=cva_w&x={x}&y={y}&l={z}&tk=81dd3e1715be9d296f1a9f2b0c0196aa",
+        {
+          maxZoom: 18,
+          attribution: "Map data &copy; demo",
+          id: "mapbox/streets-v11",
+          tileSize: 512,
+          zoomOffset: -1,
+        }
+      ).addTo(map);
+
+      var latlngs = undefined;
+      var polyline = undefined;
+      function clickUpdate() {
+        if (polyline !== undefined) {
+          map.removeLayer(polyline);
+        }
+
+        var latlngText = document.getElementById("latlngText");
+        var latlngTextArr = latlngText.value.split("\n");
+
+        var latlngs = [];
+        latlngTextArr.forEach((element) => {
+          // console.log("item", element);
+          var latlngArr = element.split(",");
+          var lat = parseFloat(latlngArr[0]);
+          var lng = parseFloat(latlngArr[1]);
+          if (lat && lng) {
+            latlngs.push([lat, lng]);
+          }
+        });
+
+        if (latlngs.length === 1) {
+          latlngs = [latlngs[0], latlngs[0]];
+        }
+
+        document.getElementById("ais-num").value = latlngs.length;
+
+        // console.log("latlngs", latlngs);
+        // console.log("log", latlngText.value);
+        // create a red polyline from an array of arrays of LatLng points
+
+        polyline = L.polyline(latlngs, { color: "red" }).addTo(map);
+
+        // zoom the map to the polyline
+        map.fitBounds(polyline.getBounds());
+      }
+    </script>
+  </body>
+</html>
